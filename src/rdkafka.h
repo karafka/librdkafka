@@ -4584,6 +4584,32 @@ rd_kafka_consumer_group_metadata_new_with_genid(const char *group_id,
                                                 const char *member_id,
                                                 const char *group_instance_id);
 
+/**
+ * @brief Get group id of a group metadata.
+ *
+ * @param group_metadata The group metadata
+ *
+ * @returns The group id contained in the passed \p group_metadata.
+ *
+ * @remark The returned pointer has the same lifetime as \p group_metadata.
+ */
+RD_EXPORT
+const char *rd_kafka_consumer_group_metadata_group_id(
+    const rd_kafka_consumer_group_metadata_t *group_metadata);
+
+/**
+ * @brief Get group instance id of a group metadata.
+ *
+ * @param group_metadata The group metadata
+ *
+ * @returns The group instance id contained in the passed \p group_metadata.
+ *          or NULL.
+ *
+ * @remark The returned pointer has the same lifetime as \p group_metadata.
+ */
+RD_EXPORT
+const char *rd_kafka_consumer_group_metadata_group_instance_id(
+    const rd_kafka_consumer_group_metadata_t *group_metadata);
 
 /**
  * @brief Get member id of a group metadata.
@@ -4598,6 +4624,17 @@ RD_EXPORT
 const char *rd_kafka_consumer_group_metadata_member_id(
     const rd_kafka_consumer_group_metadata_t *group_metadata);
 
+/**
+ * @brief Get member epoch of a group metadata.
+ *        Corresponds to the generation id in consumer protocol classic;
+ *
+ * @param group_metadata The group metadata
+ *
+ * @returns The member epoch id contained in the passed \p group_metadata.
+ */
+RD_EXPORT
+int32_t rd_kafka_consumer_group_metadata_member_epoch(
+    const rd_kafka_consumer_group_metadata_t *group_metadata);
 
 /**
  * @brief Frees the consumer group metadata object as returned by
@@ -5153,6 +5190,18 @@ typedef enum {
 } rd_kafka_consumer_group_state_t;
 
 /**
+ * @enum rd_kafka_consumer_group_type_t
+ *
+ * @brief Consumer group type.
+ */
+typedef enum {
+        RD_KAFKA_CONSUMER_GROUP_TYPE_UNKNOWN              = 0,
+        RD_KAFKA_CONSUMER_GROUP_TYPE_CONSUMER             = 1,
+        RD_KAFKA_CONSUMER_GROUP_TYPE_CLASSIC              = 2,
+        RD_KAFKA_CONSUMER_GROUP_TYPE__CNT
+} rd_kafka_consumer_group_type_t;
+
+/**
  * @brief Group information
  */
 struct rd_kafka_group_info {
@@ -5235,6 +5284,28 @@ rd_kafka_consumer_group_state_name(rd_kafka_consumer_group_state_t state);
 RD_EXPORT
 rd_kafka_consumer_group_state_t
 rd_kafka_consumer_group_state_code(const char *name);
+
+/**
+ * @brief Returns a name for a group type code.
+ *
+ * @param type The group type value.
+ *
+ * @return The group type name corresponding to the provided group type value.
+ */
+RD_EXPORT
+const char *
+rd_kafka_consumer_group_type_name(rd_kafka_consumer_group_type_t type);
+
+/**
+ * @brief Returns a code for a group type name.
+ *
+ * @param name The group type name.
+ *
+ * @return The group type value corresponding to the provided group type name.
+ */
+RD_EXPORT
+rd_kafka_consumer_group_type_t
+rd_kafka_consumer_group_type_code(const char *name);
 
 /**
  * @brief Release list memory
@@ -7203,6 +7274,24 @@ rd_kafka_error_t *rd_kafka_AdminOptions_set_match_consumer_group_states(
     size_t consumer_group_states_cnt);
 
 /**
+ * @brief Set consumer groups types to query for.
+ *
+ * @param options Admin options.
+ * @param consumer_group_types Array of consumer group types.
+ * @param consumer_group_types_cnt Size of the \p consumer_group_types array.
+ *
+ * @return NULL on success, a new error instance that must be
+ *         released with rd_kafka_error_destroy() in case of error.
+ *
+ * @remark This option is valid for ListConsumerGroups.
+ */
+RD_EXPORT
+rd_kafka_error_t *rd_kafka_AdminOptions_set_match_consumer_group_types(
+    rd_kafka_AdminOptions_t *options,
+    const rd_kafka_consumer_group_type_t *consumer_group_types,
+    size_t consumer_group_types_cnt);
+
+/**
  * @brief Set Isolation Level to an allowed `rd_kafka_IsolationLevel_t` value.
  */
 RD_EXPORT
@@ -8524,6 +8613,17 @@ int rd_kafka_ConsumerGroupListing_is_simple_consumer_group(
  */
 RD_EXPORT
 rd_kafka_consumer_group_state_t rd_kafka_ConsumerGroupListing_state(
+    const rd_kafka_ConsumerGroupListing_t *grplist);
+
+/**
+ * @brief Gets group_type for the \p grplist group.
+ *
+ * @param grplist The group listing.
+ *
+ * @return A group type.
+ */
+RD_EXPORT
+rd_kafka_consumer_group_type_t rd_kafka_ConsumerGroupListing_type(
     const rd_kafka_ConsumerGroupListing_t *grplist);
 
 /**
