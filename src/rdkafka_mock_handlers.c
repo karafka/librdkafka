@@ -2727,7 +2727,7 @@ rd_kafka_mock_handle_ConsumerGroupHeartbeat(rd_kafka_mock_connection_t *mconn,
                 rd_kafka_mock_handle_ConsumerGroupHeartbeat_write_TopicPartitions(
                     resp, next_assignment);
 
-                rd_kafka_buf_write_tags(resp);
+                rd_kafka_buf_write_tags_empty(resp);
         } else {
                 /* Response: Assignment */
                 rd_kafka_buf_write_i8(resp, -1);
